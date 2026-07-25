@@ -7,6 +7,7 @@ export async function lookupCURPInLogisticaACN(
 ): Promise<LineResult> {
   const validationResponse = await fetch(
     `https://ku.diri.mx/consultaRNU/${curp}`,
+    { signal: AbortSignal.timeout(50000) },
   );
 
   if (!validationResponse.ok) {

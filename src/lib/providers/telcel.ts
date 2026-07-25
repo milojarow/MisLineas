@@ -109,7 +109,7 @@ async function postJSON<T>(
         method: "POST",
         headers,
         rejectUnauthorized: false,
-        timeout: 10000,
+        timeout: 50000,
       },
       (res) => {
         let data = "";

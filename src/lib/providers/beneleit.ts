@@ -6,6 +6,7 @@ export async function lookupCURPInBeneleit(
 ): Promise<LineResult> {
   const validationResponse = await fetch(
     `https://core.beneleit.talentonet.com/api/core/consulta_lineas_vinculacion?curp=${curp}`,
+    { signal: AbortSignal.timeout(50000) },
   );
 
   if (validationResponse.status === 404) {

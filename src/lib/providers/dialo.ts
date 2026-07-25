@@ -21,6 +21,7 @@ export async function lookupCURPInDialo(curp: string): Promise<LineResult> {
       method: "POST",
       headers: validationHeaders,
       body: JSON.stringify(validationBody),
+      signal: AbortSignal.timeout(50000),
     },
   );
 

@@ -13,6 +13,7 @@ export async function lookupCURPInIENTC(curp: string): Promise<LineResult> {
         Authorization: `Basic N3U4ZThyNjF0OGwwbnRmZ3I5dmozaWhpN2U6a3FvYzNoYzIyZW9nYmVlazdyZWVzNnZqMW81cHFhMzlxcjg4aWVmZ3A3YTRudjd1aXFx`,
       },
       body: authFormData,
+      signal: AbortSignal.timeout(50000),
     },
   );
 
@@ -38,6 +39,7 @@ export async function lookupCURPInIENTC(curp: string): Promise<LineResult> {
       headers: {
         Authorization: `Bearer ${accessToken}`,
       },
+      signal: AbortSignal.timeout(50000),
     },
   );
 

@@ -24,6 +24,7 @@ export async function lookupCURPINMobig(curp: string): Promise<LineResult> {
       "Sec-Fetch-User": "?1",
     },
     redirect: "follow",
+    signal: AbortSignal.timeout(50000),
   });
 
   if (!sessionResponse.ok) {
@@ -82,6 +83,7 @@ export async function lookupCURPINMobig(curp: string): Promise<LineResult> {
       "Sec-Fetch-Site": "same-origin",
     },
     body: JSON.stringify({ curp }),
+    signal: AbortSignal.timeout(50000),
   });
 
   const data = await searchResponse.json().catch(() => null);

@@ -1,7 +1,6 @@
 "use client";
 
 import { useRef, useState } from "react";
-import { QUERY_TIMEOUT_MS } from "@/lib/data/content";
 import { transformApiResponse } from "@/lib/lookup";
 import type { DisplayLine, ProviderResponse } from "@/types";
 
@@ -33,15 +32,12 @@ export function useLookup(onConsult?: (curp: string) => void) {
     const controller = new AbortController();
     abortRef.current = controller;
 
-    const timeoutId = setTimeout(() => {
-      controller.abort();
-      if (requestIdRef.current !== requestId) {
-        return;
-      }
-
-      setTimedOut(true);
-      setLoading(false);
-    }, QUERY_TIMEOUT_MS * 2);
+    // Límite de tiempo del cliente eliminado a petición ("quita el tiempo límite"):
+    // la consulta nunca se aborta sola ni muestra "La consulta excedió el tiempo límite".
+    // El stream NDJSON termina cuando el servidor lo cierra (reader done); cada proveedor
+    // tiene su propio timeout finito, así que el stream siempre cierra por sí mismo.
+    // Se conserva `timeoutId` como handle inofensivo para que los clearTimeout sigan válidos.
+    const timeoutId = setTimeout(() => {}, 0);
 
     try {
       onConsult?.(curp);

@@ -67,8 +67,12 @@ export function generateChallenges(
   return challenges;
 }
 
-export function solveChallenge(salt: string, target: string): number {
+export async function solveChallenge(
+  salt: string,
+  target: string,
+): Promise<number> {
   let nonce = 0;
+  const deadline = Date.now() + 30000;
 
   while (true) {
     const hash = crypto
@@ -81,20 +85,35 @@ export function solveChallenge(salt: string, target: string): number {
     }
 
     nonce++;
+
+    // El proof-of-work es CPU-bound y, SÍNCRONO, congelaba el event loop del proceso
+    // (hasta 50s) saboteando a TODOS los demás providers — AT&T caía en timeout
+    // mientras Altan molía hashes. Cada 4096 hashes cedemos el control con
+    // setImmediate para que las otras consultas progresen, y un deadline corta una
+    // dificultad imposible (route.ts captura el throw por-proveedor).
+    if ((nonce & 0xfff) === 0) {
+      if (Date.now() > deadline) {
+        throw new Error("Altan challenge solve exceeded time budget");
+      }
+      await new Promise((resolve) => setImmediate(resolve));
+    }
   }
 }
 
-export function solveCapChallenge(
+export async function solveCapChallenge(
   challengeResponse: ChallengeInput,
-): ChallengeSolution {
+): Promise<ChallengeSolution> {
   const { challenge, token } = challengeResponse;
   const { c, s, d } = challenge;
 
   const challenges = generateChallenges(token, c, s, d);
 
-  const solutions = challenges.map(([salt, target]) =>
-    solveChallenge(salt, target),
-  );
+  // Secuencial con await: cada solve cede el event loop, así Altan nunca bloquea
+  // a los demás providers durante la resolución del proof-of-work.
+  const solutions: number[] = [];
+  for (const [salt, target] of challenges) {
+    solutions.push(await solveChallenge(salt, target));
+  }
 
   return { token, solutions };
 }

@@ -49,6 +49,7 @@ export async function lookupCURPInVinculatulinea(curp: string): Promise<LineResu
       processId,
       OPERATION_CONTEXT: "MY_LINES",
     },
+    signal: AbortSignal.timeout(50000),
   });
 
   const data = await response.json().catch(() => null);

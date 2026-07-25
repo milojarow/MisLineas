@@ -22,6 +22,7 @@ export async function lookupCURPInATT(curp: string): Promise<LineResult> {
         "Content-Type": "application/json",
       },
       body: JSON.stringify(sessionBody),
+      signal: AbortSignal.timeout(50000),
     },
   );
 
@@ -72,6 +73,7 @@ export async function lookupCURPInATT(curp: string): Promise<LineResult> {
         "Content-Type": "application/json",
       },
       body: JSON.stringify(validationBody),
+      signal: AbortSignal.timeout(50000),
     },
   );
 

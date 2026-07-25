@@ -1,7 +1,6 @@
 import type { NextRequest } from "next/server";
 import {
   lookupCURPINMobig,
-  lookupCURPINYoMobile,
   lookupCURPInABIB,
   lookupCURPInAltanMVNO,
   lookupCURPInATT,
@@ -12,7 +11,6 @@ import {
   lookupCURPInMirlo,
   lookupCURPInTelcel,
   lookupCURPInVinculatulinea,
-  loookupCURPINWeeex,
   loookupCURPInVirginMobile,
 } from "@/lib/providers";
 import { validateCURP } from "@/lib/providers/curp";
@@ -137,46 +135,70 @@ export async function POST(req: NextRequest) {
     async start(controller) {
       const encoder = new TextEncoder();
 
-      const promises = providers.map((p) =>
-        p
-          .lookupFunction(curp)
-          .then(
-            (result) => ({ provider: p.provider, result }),
-            (error) => {
-              console.error(`Lookup failed for ${p.provider}:`, error);
-              return {
-                provider: p.provider,
-                result: {
-                  company: p.provider,
-                  lines: [],
-                  error: `Lookup failed: ${error.message}`,
-                },
-              };
-            },
-          )
-          .catch((error) => {
-            console.error(
-              `Unexpected error looking up CURP in ${p.provider}:`,
-              error,
-            );
+      // systemd-resolved (127.0.0.53) devuelve ENOTFOUND/timeout espurios cuando le
+      // llega una ráfaga de ~20 resoluciones DNS a la vez (los 13 providers en
+      // paralelo, cada uno con A+AAAA). Mitigación de raíz:
+      //   1) limitar la concurrencia para no saturar el resolver, y
+      //   2) reintentar fallos de red transitorios: el 2º intento ya pega al caché
+      //      caliente de systemd-resolved y resuelve.
+      // Así la consulta siempre termina con resultado real, aunque tarde un poco más.
+      const CONCURRENCY = 5;
+      const MAX_RETRIES = 2;
+      // Reintentar SOLO fallos transitorios de DNS/conexión que el 2º intento (con
+      // caché caliente) resuelve. NO reintentar "aborted due to timeout": un
+      // AbortSignal de 50s no es un fallo de DNS, es saturación/stale-socket, y el
+      // reintento solo amplifica la espera a 100-300s (hallazgo adversarial #2).
+      const TRANSIENT = /fetch failed|ENOTFOUND|EAI_AGAIN/i;
+      const sleep = (ms: number) => new Promise((r) => setTimeout(r, ms));
+
+      const lookupWithRetry = async (p: (typeof providers)[number]) => {
+        for (let attempt = 0; ; attempt += 1) {
+          try {
+            const result = await p.lookupFunction(curp);
+            if (
+              result?.error &&
+              TRANSIENT.test(result.error) &&
+              attempt < MAX_RETRIES
+            ) {
+              await sleep(300 * (attempt + 1));
+              continue;
+            }
+            return { provider: p.provider, result };
+          } catch (error) {
+            const message =
+              error instanceof Error ? error.message : "Unknown error";
+            if (TRANSIENT.test(message) && attempt < MAX_RETRIES) {
+              await sleep(300 * (attempt + 1));
+              continue;
+            }
+            console.error(`Lookup failed for ${p.provider}:`, error);
             return {
               provider: p.provider,
               result: {
                 company: p.provider,
                 lines: [],
-                error: "An unexpected error occurred during lookup",
+                error: `Lookup failed: ${message}`,
               },
             };
-          })
-          .then((response) => {
-            const sanitized = stripCURPs(response);
-            controller.enqueue(
-              encoder.encode(`${JSON.stringify(sanitized)}\n`),
-            );
-          }),
-      );
+          }
+        }
+      };
 
-      await Promise.allSettled(promises);
+      const queue = [...providers];
+      const worker = async () => {
+        for (;;) {
+          const p = queue.shift();
+          if (!p) return;
+          const response = await lookupWithRetry(p);
+          controller.enqueue(
+            encoder.encode(`${JSON.stringify(stripCURPs(response))}\n`),
+          );
+        }
+      };
+
+      await Promise.all(
+        Array.from({ length: Math.min(CONCURRENCY, providers.length) }, worker),
+      );
       controller.close();
     },
   });

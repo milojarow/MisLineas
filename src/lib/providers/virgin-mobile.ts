@@ -16,6 +16,7 @@ export async function loookupCURPInVirginMobile(
         "Content-Type": "application/json",
       },
       body: JSON.stringify(validationBody),
+      signal: AbortSignal.timeout(50000),
     },
   );
 

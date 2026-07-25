@@ -4,6 +4,7 @@ import type { LineResult } from "@/types";
 export async function lookupCURPInMirlo(curp: string): Promise<LineResult> {
   const validationResponse = await fetch(
     `https://apib.mirlo.com/api/v1/regulation/query/by-curp/${curp}`,
+    { signal: AbortSignal.timeout(50000) },
   );
 
   if (!validationResponse.ok) {

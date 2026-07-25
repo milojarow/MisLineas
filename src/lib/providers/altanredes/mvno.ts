@@ -89,6 +89,7 @@ export async function lookupCURPInAltanMVNO(curp: string): Promise<LineResult> {
         "sec-gpc": "1",
         Referer: "https://rnu.altanredes.com/consulta",
       },
+      signal: AbortSignal.timeout(50000),
     },
   );
 
@@ -101,7 +102,7 @@ export async function lookupCURPInAltanMVNO(curp: string): Promise<LineResult> {
   }
 
   const challengeData = await challengeResponse.json();
-  const solution = solveCapChallenge(challengeData);
+  const solution = await solveCapChallenge(challengeData);
 
   const redeemResponse = await fetch(
     "https://rnu.altanredes.com/api/mx/captcha/a92a56476f/redeem",
@@ -122,6 +123,7 @@ export async function lookupCURPInAltanMVNO(curp: string): Promise<LineResult> {
       },
       body: JSON.stringify(solution),
       referrer: "https://rnu.altanredes.com/consulta",
+      signal: AbortSignal.timeout(50000),
     },
   );
 
@@ -204,6 +206,7 @@ export async function lookupCURPInAltanMVNO(curp: string): Promise<LineResult> {
       Referer: "https://rnu.altanredes.com/consulta",
     },
     body: null,
+    signal: AbortSignal.timeout(50000),
   });
 
   if (!validationResponse.ok) {

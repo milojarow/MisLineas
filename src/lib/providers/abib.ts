@@ -4,6 +4,7 @@ import type { LineResult } from "@/types";
 export async function lookupCURPInABIB(curp: string): Promise<LineResult> {
   const validationResponse = await fetch(
     `https://erp.abib.com.mx/api/lineas/${curp}`,
+    { signal: AbortSignal.timeout(50000) },
   );
 
   if (!validationResponse.ok) {
