@@ -11,7 +11,7 @@ export async function lookupCURPInMegamovil(curp: string): Promise<LineResult> {
       .text()
       .catch(() => "(unreadable)");
     console.error(
-      `Failed to validate CURP with Megamovil: ${validationResponse.status} ${validationResponse.statusText} — body: ${errorBody}`,
+      `Failed to validate CURP with Megamovil: ${validationResponse.status} ${validationResponse.statusText} — body: ${String(stripCURPs(errorBody))}`,
     );
 
     return {

@@ -1,3 +1,4 @@
+import { stripCURPs } from "@/lib/sanitize";
 import type { LineResult } from "@/types";
 
 export async function lookupCURPInSorcel(curp: string): Promise<LineResult> {
@@ -17,7 +18,7 @@ export async function lookupCURPInSorcel(curp: string): Promise<LineResult> {
       .text()
       .catch(() => "(unreadable)");
     console.error(
-      `Failed to validate CURP with Sorcel: ${validationResponse.status} ${validationResponse.statusText} — body: ${errorBody}`,
+      `Failed to validate CURP with Sorcel: ${validationResponse.status} ${validationResponse.statusText} — body: ${String(stripCURPs(errorBody))}`,
     );
 
     return {
@@ -38,7 +39,10 @@ export async function lookupCURPInSorcel(curp: string): Promise<LineResult> {
     };
   }
 
-  console.log("[sorcel] registered response (HTML text):", validationText);
+  console.log(
+    "[sorcel] registered response (HTML text):",
+    stripCURPs(validationText),
+  );
   return {
     company: "Sorcel",
     lines: [],

@@ -60,7 +60,7 @@ export async function lookupCURPINNextorMovil(
       .text()
       .catch(() => "(unreadable)");
     console.error(
-      `Failed to validate CURP with Nextor Movil: ${validationResponse.status} ${validationResponse.statusText} — body: ${errorBody}`,
+      `Failed to validate CURP with Nextor Movil: ${validationResponse.status} ${validationResponse.statusText} — body: ${String(stripCURPs(errorBody))}`,
     );
 
     return {
