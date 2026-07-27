@@ -66,8 +66,8 @@ export default function MisLineas() {
         <AlertTriangle className="w-5 h-5 shrink-0" />
         <p className="text-center max-w-4xl font-medium">
           <strong>AT&amp;T no está dando respuesta.</strong> Rechaza las consultas
-          automatizadas, así que sus líneas no aparecen en estos resultados. Para
-          revisar AT&amp;T, Unefon o WIM entra directo a{" "}
+          automatizadas venga de donde venga, así que sus líneas no aparecen
+          aquí; revísalas directo en{" "}
           <a
             href="https://att.com.mx"
             target="_blank"
@@ -76,7 +76,10 @@ export default function MisLineas() {
           >
             att.com.mx
           </a>
-          .
+          . <strong>Telcel y Vinculatulinea</strong> (Freedompop, OUI, OXXO CEL,
+          Uber Cel, AhorroCel, Chedraui Móvil, Yobi Telecom) sí funcionan, pero
+          bloquean las IPs de servidor: solo responden si corres la herramienta
+          desde tu propia conexión.
         </p>
       </div>
 
