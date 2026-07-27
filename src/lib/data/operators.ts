@@ -39,7 +39,12 @@ export const OPERATORS: OperatorEntry[] = [
   { name: "AhorroCel", status: "supported" },
   { name: "AI Telecomm", status: "supported" },
   { name: "ALLCE", status: "paused", reason: "Recaptcha bloquea peticiones desde servidor." },
-  { name: "AT&T / Unefon / WIM", status: "supported" },
+  {
+    name: "AT&T / Unefon / WIM",
+    status: "paused",
+    reason:
+      "AT&T rechaza las consultas automatizadas. Revisa tus líneas en att.com.mx.",
+  },
   { name: "Bait", status: "supported" },
   { name: "Beneleit Móvil", status: "supported" },
   { name: "Bestel", status: "paused", reason: "No ofrecen opción para verificar vinculación de líneas." },

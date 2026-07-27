@@ -3,7 +3,6 @@ import {
   lookupCURPINMobig,
   lookupCURPInABIB,
   lookupCURPInAltanMVNO,
-  lookupCURPInATT,
   lookupCURPInBeneleit,
   lookupCURPInDialo,
   lookupCURPInIENTC,
@@ -22,10 +21,15 @@ const providers: Array<{
   provider: string;
   lookupFunction: (curp: string) => Promise<LineResult>;
 }> = [
-  {
-    provider: "AT&T",
-    lookupFunction: lookupCURPInATT,
-  },
+  // {
+  //   provider: "AT&T",
+  //   lookupFunction: lookupCURPInATT,
+  //   // Disabled: att.com.mx answers 403 to the plain session/initlines POST from
+  //   // every origin we measured (residential line and datacenter alike) — it is a
+  //   // bot-fingerprint block, not an IP block. Reaching it needs a real browser
+  //   // through a residential proxy, which upstream built and then dropped because
+  //   // it burned ~95% of their proxy bandwidth. The UI points users to att.com.mx.
+  // },
   {
     provider: "Telcel",
     lookupFunction: lookupCURPInTelcel,
@@ -171,7 +175,10 @@ export async function POST(req: NextRequest) {
               await sleep(300 * (attempt + 1));
               continue;
             }
-            console.error(`Lookup failed for ${p.provider}:`, error);
+            console.error(
+              `Lookup failed for ${p.provider}:`,
+              String(stripCURPs(message)),
+            );
             return {
               provider: p.provider,
               result: {

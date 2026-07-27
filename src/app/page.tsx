@@ -1,6 +1,6 @@
 "use client";
 
-import { Server, Sparkles } from "lucide-react";
+import { AlertTriangle, Sparkles } from "lucide-react";
 import { AnimatePresence } from "motion/react";
 import type React from "react";
 import { useState } from "react";
@@ -62,10 +62,21 @@ export default function MisLineas() {
         </p>
       </div>
 
-      <div className="flex items-center justify-center gap-3 border-b border-emerald-300/60 bg-[linear-gradient(90deg,#059669_0%,#047857_100%)] px-4 py-3 text-sm text-white">
-        <Server className="w-5 h-5 shrink-0" />
+      <div className="flex items-center justify-center gap-3 border-b border-amber-300/60 bg-[linear-gradient(90deg,#b45309_0%,#92400e_100%)] px-4 py-3 text-sm text-white">
+        <AlertTriangle className="w-5 h-5 shrink-0" />
         <p className="text-center max-w-4xl font-medium">
-          <strong>Migración de servidor completada.</strong> Hemos migrado a un servidor más potente para soportar la demanda actual. Si experimentas algún problema, recarga la página.
+          <strong>AT&amp;T no está dando respuesta.</strong> Rechaza las consultas
+          automatizadas, así que sus líneas no aparecen en estos resultados. Para
+          revisar AT&amp;T, Unefon o WIM entra directo a{" "}
+          <a
+            href="https://att.com.mx"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="underline underline-offset-2 font-semibold hover:text-amber-100"
+          >
+            att.com.mx
+          </a>
+          .
         </p>
       </div>
 
