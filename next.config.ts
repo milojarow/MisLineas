@@ -24,6 +24,9 @@ const securityHeaders = [
 
 const nextConfig: NextConfig = {
   reactCompiler: true,
+  // Emits .next/standalone, a self-contained server bundle the container image
+  // copies in without shipping node_modules.
+  output: "standalone",
   async headers() {
     return [
       {
