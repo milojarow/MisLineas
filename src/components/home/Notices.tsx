@@ -34,6 +34,19 @@ export function Notices() {
           Hadassah Garcia
         </a>
       </div>
+
+      <div className="flex items-center justify-center gap-1 text-xs text-zinc-400">
+        <span>Esta instancia corre una</span>
+        <a
+          href="https://github.com/milojarow/MisLineas/tree/resilience-fixes"
+          target="_blank"
+          rel="noopener noreferrer"
+          className="font-semibold text-zinc-600 hover:text-zinc-900 transition-colors underline underline-offset-2 decoration-zinc-300 hover:decoration-zinc-500"
+        >
+          versión modificada
+        </a>
+        <span>del proyecto original (GPL-2.0).</span>
+      </div>
     </div>
   );
 }
