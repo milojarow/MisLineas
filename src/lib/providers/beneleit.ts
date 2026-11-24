@@ -39,14 +39,27 @@ export async function lookupCURPInBeneleit(
   }
 
   const positiveData = await validationResponse.json().catch(() => null);
-  console.log(
-    "[beneleit] registered response:",
+
+  if (Array.isArray(positiveData?.data) && positiveData.data.length > 0) {
+    console.log(
+      "[beneleit] registered response:",
+      JSON.stringify(stripCURPs(positiveData), null, 2),
+    );
+    return {
+      company: "Beneleit Móvil",
+      lines: [],
+      isRegistered: true,
+      rawApiResponse: positiveData,
+    };
+  }
+
+  console.error(
+    "[beneleit] unrecognized response shape, refusing to guess:",
     JSON.stringify(stripCURPs(positiveData), null, 2),
   );
   return {
     company: "Beneleit Móvil",
     lines: [],
-    isRegistered: true,
-    rawApiResponse: positiveData,
+    error: "Unrecognized response shape from Beneleit",
   };
 }

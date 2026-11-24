@@ -80,14 +80,28 @@ export async function lookupCURPInIENTC(curp: string): Promise<LineResult> {
   }
 
   const positiveData = await validationResponse.json().catch(() => null);
-  console.log(
-    "[ientc] registered response:",
+
+  const phones = positiveData?.data ?? positiveData?.phones;
+  if (Array.isArray(phones) && phones.length > 0) {
+    console.log(
+      "[ientc] registered response:",
+      JSON.stringify(stripCURPs(positiveData), null, 2),
+    );
+    return {
+      company: "IENTC",
+      lines: [],
+      isRegistered: true,
+      rawApiResponse: positiveData,
+    };
+  }
+
+  console.error(
+    "[ientc] unrecognized response shape, refusing to guess:",
     JSON.stringify(stripCURPs(positiveData), null, 2),
   );
   return {
     company: "IENTC",
     lines: [],
-    isRegistered: true,
-    rawApiResponse: positiveData,
+    error: "Unrecognized response shape from IENTC",
   };
 }

@@ -109,22 +109,37 @@ export async function lookupCURPINMobig(curp: string): Promise<LineResult> {
     };
   }
 
-  if (Array.isArray(data.data) && data.data.length === 0) {
+  const linesField =
+    data?.data?.msisdns ?? data?.data?.last_digits ?? data?.data;
+
+  if (Array.isArray(linesField)) {
+    if (linesField.length === 0) {
+      return {
+        company: "Mobig",
+        lines: [],
+        isRegistered: false,
+      };
+    }
+
+    console.log(
+      "[mobig] registered response:",
+      JSON.stringify(stripCURPs(data), null, 2),
+    );
     return {
       company: "Mobig",
       lines: [],
-      isRegistered: false,
+      isRegistered: true,
+      rawApiResponse: data,
     };
   }
 
-  console.log(
-    "[mobig] registered response:",
+  console.error(
+    "[mobig] unrecognized response shape, refusing to guess:",
     JSON.stringify(stripCURPs(data), null, 2),
   );
   return {
     company: "Mobig",
     lines: [],
-    isRegistered: true,
-    rawApiResponse: data,
+    error: "Unrecognized response shape from Mobig",
   };
 }

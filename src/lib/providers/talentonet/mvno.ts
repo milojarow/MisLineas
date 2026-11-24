@@ -39,16 +39,32 @@ export async function loookupCURPInTalentoNetMVNO(
     };
   }
 
-  const positiveData = await validationResponse.json().catch(() => null);
-  console.log(
-    "[talentonet] registered response:",
+  const positiveData = (await validationResponse.json().catch(() => null)) as {
+    data?: unknown[];
+  } | null;
+
+  if (Array.isArray(positiveData?.data) && positiveData.data.length > 0) {
+    console.log(
+      "[talentonet] registered response:",
+      JSON.stringify(stripCURPs(positiveData), null, 2),
+    );
+    return {
+      company: "Newww",
+      lines: [],
+      possibleProviders,
+      isRegistered: true,
+      rawApiResponse: positiveData,
+    };
+  }
+
+  console.error(
+    "[talentonet] unrecognized response shape, refusing to guess:",
     JSON.stringify(stripCURPs(positiveData), null, 2),
   );
   return {
     company: "Newww",
     lines: [],
-    possibleProviders: possibleProviders,
-    isRegistered: true,
-    rawApiResponse: positiveData,
+    possibleProviders,
+    error: "Unrecognized response shape from Newww",
   };
 }
