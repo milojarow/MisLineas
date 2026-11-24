@@ -1,5 +1,11 @@
 export const CURP_REGEX = /^[A-Z]{4}\d{6}[HMX][A-Z]{5}[A-Z0-9]\d$/;
 
+export function maskCurpForDisplay(curp: string): string {
+  const visibleCharacters = 2;
+  const hiddenLength = Math.max(0, curp.length - visibleCharacters);
+  return `${"•".repeat(hiddenLength)}${curp.slice(-visibleCharacters)}`;
+}
+
 export function getCurpValidationError(curp: string): string | null {
   if (curp.length === 0) return null;
   if (curp.length < 18) return null;
