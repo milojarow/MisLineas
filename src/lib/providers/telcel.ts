@@ -8,8 +8,8 @@ const BASE_HOST = "registro.telcel.com";
 const LOG_PREFIX = "[telcel]";
 const LOOKUP_MAX_ATTEMPTS = 2;
 const LOOKUP_RETRY_DELAYS_MS = [1000];
-const VALIDATION_MAX_ATTEMPTS = 2;
-const VALIDATION_RETRY_DELAYS_MS = [250];
+const VALIDATION_MAX_ATTEMPTS = 4;
+const VALIDATION_RETRY_DELAYS_MS = [250, 500, 750];
 
 const sleep = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms));
 

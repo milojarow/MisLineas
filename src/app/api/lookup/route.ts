@@ -1,15 +1,16 @@
 import type { NextRequest } from "next/server";
 import {
   lookupCURPINMobig,
-  lookupCURPInABIB,
   lookupCURPInAltanMVNO,
   lookupCURPInBeneleit,
-  lookupCURPInDialo,
   lookupCURPInIENTC,
   lookupCURPInLogisticaACN,
   lookupCURPInMirlo,
   lookupCURPInTelcel,
+  lookupCURPInViasat,
   lookupCURPInVinculatulinea,
+  lookupCURPInVinoc,
+  loookupCURPINWeeex,
   loookupCURPInVirginMobile,
 } from "@/lib/providers";
 import { validateCURP } from "@/lib/providers/curp";
@@ -39,17 +40,12 @@ const providers: Array<{
     lookupFunction: lookupCURPInAltanMVNO,
   },
   {
-    provider: "ABIB",
-    lookupFunction: lookupCURPInABIB,
-  },
-  {
     provider: "Beneleit Móvil",
     lookupFunction: lookupCURPInBeneleit,
   },
-  {
-    provider: "Dialo",
-    lookupFunction: lookupCURPInDialo,
-  },
+  // ABIB is now covered by the Altan lookup above. Its old direct endpoint
+  // redirects to a login and no longer accepts public CURP queries.
+  // Dialo is disabled because its API host no longer resolves.
   {
     provider: "IENTC",
     lookupFunction: lookupCURPInIENTC,
@@ -90,10 +86,18 @@ const providers: Array<{
     provider: "Virgin Mobile",
     lookupFunction: loookupCURPInVirginMobile,
   },
-  // {
-  //   provider: "Weex",
-  //   lookupFunction: loookupCURPINWeeex,
-  // },
+  {
+    provider: "Weex",
+    lookupFunction: loookupCURPINWeeex,
+  },
+  {
+    provider: "Viasat",
+    lookupFunction: lookupCURPInViasat,
+  },
+  {
+    provider: "Vinoc",
+    lookupFunction: lookupCURPInVinoc,
+  },
   {
     provider:
       "Vinculatulinea (Freedompop/OUI/OXXO CEL/Uber Cel/AhorroCel/Chedraui Móvil/Yobi Telecom)",

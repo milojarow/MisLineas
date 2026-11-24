@@ -7,6 +7,7 @@ import {
   Wifi,
   Zap,
 } from "lucide-react";
+import { OPERATORS } from "@/lib/data/operators";
 
 export const KNOWN_PROVIDERS: { name: string; icon: LucideIcon }[] = [
   { name: "Telcel", icon: Signal },
@@ -48,5 +49,6 @@ export const ARCO_RIGHTS = [
   { t: "Oposición", d: "Niégate al uso" },
 ];
 
-export const TOTAL_PROVIDERS = 104;
+export const TOTAL_PROVIDERS = OPERATORS.length;
 export const QUERY_TIMEOUT_MS = 15000;
+export const PROVIDER_TIMEOUT_MS = 50000;
